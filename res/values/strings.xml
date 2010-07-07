@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, ImageBoardActivity!</string>
     <string name="app_name">4chan</string>
+<string name="404">404 thread not found</string>
 </resources>

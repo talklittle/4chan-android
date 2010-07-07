@@ -12,6 +12,8 @@ import org.xml.sax.SAXException;
 public class SingleThreadContentHandler implements ContentHandler {
 
 	static final Pattern DATE_PATTERN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d\\([A-Z][a-z][a-z]\\)\\d\\d:\\d\\d");
+	// MultiThread view only
+	static final Pattern OMITTED_PATTERN = Pattern.compile("(\\d+) posts(?: and (\\d+) image replies)? omitted");
 
 	private ArrayList<Message> mMessages = null;
 	private Message mCurrentMessage = null;

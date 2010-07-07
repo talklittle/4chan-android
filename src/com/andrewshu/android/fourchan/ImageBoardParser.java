@@ -41,38 +41,7 @@ public class ImageBoardParser {
 
     List<Message> getPosts(String thrd)
     {
-    	DefaultHttpClient client = CommonClient.getGzipHttpClient();
-    	
-    	HttpGet request = null;
-    	HttpResponse response = null;
-    	HttpEntity entity = null;
-    	InputStream content = null;
-    	long contentLength = -1;
-    	
-    	try {
-	    	request = new HttpGet(thrd);
-	        response = client.execute(request);
-	    	entity = response.getEntity();
-	    	content = entity.getContent();
-	    	// entity.getContentLength() seems to always return -1, but it's ok
-	    	// because ProgressInputStream doesn't seem to use the maxNumBytes parameter anyway.
-	    	contentLength = entity.getContentLength();
-	    	
-	        SingleThreadContentHandler singleHandler = new SingleThreadContentHandler();
-	        Parser parser = new Parser();
-	        parser.setContentHandler(singleHandler);
-	        InputSource in = new InputSource(new ProgressInputStream(content, contentLength));
-	        parser.parse(in);
-	        
-	        return singleHandler.getMessages();
 
-    	} catch (Exception e) {
-    		if (Constants.LOGGING) Log.e(TAG, "getPosts", e);
-    	} finally {
-    		try { content.close(); } catch (Exception ignore) {}
-    		try { entity.consumeContent(); } catch (Exception ignore) {}
-    	}
-    	return null;
     }
 
 
