@@ -18,7 +18,7 @@ public class ImageBoardParser {
 	
 	private static final String TAG = "ImageBoardParser";
 	
-    String _4ChanThread = "http://boards.4chan.org/n/res/188345";
+    String _4ChanThread = "http://boards.4chan.org/v/res/65842698";
 
     public static void Main()
     {
@@ -29,8 +29,12 @@ public class ImageBoardParser {
     public void entryPoint()
     {
         List<Message> messages = getPosts(_4ChanThread);
-        for (Message message : messages) {
-        	Log.d(TAG, message.toString());
+        if (messages != null) {
+	        for (Message message : messages) {
+	        	Log.d(TAG, message.toString());
+	        }
+        } else {
+        	Log.w(TAG, "messages null. Thread expired?");
         }
         
     }
@@ -50,9 +54,9 @@ public class ImageBoardParser {
 	        response = client.execute(request);
 	    	entity = response.getEntity();
 	    	content = entity.getContent();
-	    	// Read the header to get Content-Length since entity.getContentLength() returns -1
-        	Header contentLengthHeader = response.getFirstHeader("Content-Length");
-        	contentLength = Long.valueOf(contentLengthHeader.getValue());
+	    	// entity.getContentLength() seems to always return -1, but it's ok
+	    	// because ProgressInputStream doesn't seem to use the maxNumBytes parameter anyway.
+	    	contentLength = entity.getContentLength();
 	    	
 	        SingleThreadContentHandler singleHandler = new SingleThreadContentHandler();
 	        Parser parser = new Parser();

@@ -20,6 +20,7 @@ public class SingleThreadContentHandler implements ContentHandler {
 	
 	// States affecting upcoming parse
 	private boolean mIsAuthor = false;
+	private boolean mIsMessageText = false;
 	private boolean mIsOP = false;
 	private boolean mIsTitle = false;
 	private boolean mIsTripcode = false;
@@ -30,6 +31,13 @@ public class SingleThreadContentHandler implements ContentHandler {
 			// postername span
 			if (mIsAuthor) {
 				mCurrentMessage.author = String.valueOf(ch, start, length);
+			}
+			// blockquote
+			else if (mIsMessageText) {
+				// May be split up by sub-elements
+				// like fonts (including spoiler tags), links to other messages, etc.
+				// so append.
+				mCurrentMessage.messageText += String.valueOf(ch, start, length);
 			}
 			// title span
 			else if (mIsTitle) {
@@ -56,10 +64,18 @@ public class SingleThreadContentHandler implements ContentHandler {
 
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
+		
+		// Skip everything before first 4 horizontal rules on page.
+		if (mNumHRs < 4)
+			return;
+		
 		if ("span".equals(localName)) {
 			mIsAuthor = false;
 			mIsTitle = false;
 			mIsTripcode = false;
+		}
+		else if ("blockquote".equals(localName)) {
+			mIsMessageText = false;
 		}
 		// Each reply (not OP) is contained in <table></table>
 		else if ("table".equals(localName)) {
@@ -107,6 +123,7 @@ public class SingleThreadContentHandler implements ContentHandler {
 		mIsOP = true;
 		
 		mIsAuthor = false;
+		mIsMessageText = false;
 		mIsTitle = false;
 		mIsTripcode = false;
 	}
@@ -166,6 +183,9 @@ public class SingleThreadContentHandler implements ContentHandler {
 				else if (spanClass != null && spanClass.equals("postertrip")) {
 					mIsTripcode = true;
 				}
+			}
+			else if ("blockquote".equals(localName)) {
+				mIsMessageText = true;
 			}
 		}
 	}
